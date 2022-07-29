@@ -26,6 +26,10 @@ func (m *storeMock) GetFlag(ctx context.Context, key string) (*flipt.Flag, error
 	return args.Get(0).(*flipt.Flag), args.Error(1)
 }
 
+func (m *storeMock) CountFlags(ctx context.Context) (uint, error) {
+	return 0, nil
+}
+
 func (m *storeMock) ListFlags(ctx context.Context, opts ...storage.QueryOption) ([]*flipt.Flag, error) {
 	args := m.Called(ctx, opts)
 	return args.Get(0).([]*flipt.Flag), args.Error(1)

@@ -8,6 +8,11 @@ import (
 	empty "google.golang.org/protobuf/types/known/emptypb"
 )
 
+const (
+	defaultListFlagsLimit = 20
+	maxListFlagsLimit     = 50
+)
+
 // GetFlag gets a flag
 func (s *Server) GetFlag(ctx context.Context, r *flipt.GetFlagRequest) (*flipt.Flag, error) {
 	s.logger.WithField("request", r).Debug("get flag")
@@ -20,6 +25,14 @@ func (s *Server) GetFlag(ctx context.Context, r *flipt.GetFlagRequest) (*flipt.F
 func (s *Server) ListFlags(ctx context.Context, r *flipt.ListFlagRequest) (*flipt.FlagList, error) {
 	s.logger.WithField("request", r).Debug("list flags")
 
+	if r.Limit < 1 {
+		r.Limit = defaultListFlagsLimit
+	}
+
+	if r.Limit > maxListFlagsLimit {
+		r.Limit = maxListFlagsLimit
+	}
+
 	flags, err := s.store.ListFlags(ctx, storage.WithLimit(uint64(r.Limit)), storage.WithOffset(uint64(r.Offset)))
 	if err != nil {
 		return nil, err
@@ -30,6 +43,13 @@ func (s *Server) ListFlags(ctx context.Context, r *flipt.ListFlagRequest) (*flip
 	for i := range flags {
 		resp.Flags = append(resp.Flags, flags[i])
 	}
+
+	count, err := s.store.CountFlags(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Total = int32(count)
 
 	s.logger.WithField("response", &resp).Debug("list flags")
 	return &resp, nil

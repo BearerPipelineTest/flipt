@@ -34,7 +34,7 @@
         :paginated="segments.length > 20"
         per-page="20"
         icon-pack="fas"
-        hoverable="true"
+        :hoverable="true"
       >
         <b-table-column v-slot="props" field="key" label="Key" sortable>
           <RouterLink :to="{ name: 'segment', params: { key: props.row.key } }">

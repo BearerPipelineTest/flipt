@@ -76,6 +76,7 @@ type EvaluationStore interface {
 type FlagStore interface {
 	GetFlag(ctx context.Context, key string) (*flipt.Flag, error)
 	ListFlags(ctx context.Context, opts ...QueryOption) ([]*flipt.Flag, error)
+	CountFlags(ctx context.Context) (uint, error)
 	CreateFlag(ctx context.Context, r *flipt.CreateFlagRequest) (*flipt.Flag, error)
 	UpdateFlag(ctx context.Context, r *flipt.UpdateFlagRequest) (*flipt.Flag, error)
 	DeleteFlag(ctx context.Context, r *flipt.DeleteFlagRequest) error

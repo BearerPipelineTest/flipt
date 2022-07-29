@@ -30,8 +30,6 @@
       </div>
       <b-table
         :data="isEmpty ? [] : filteredFlags"
-        :paginated="flags.length > 20"
-        per-page="20"
         icon-pack="fas"
         :hoverable="true"
       >
@@ -84,6 +82,14 @@
           </section>
         </template>
       </b-table>
+      <b-pagination
+        v-if="totalCount > 20"
+        v-model="currentPage"
+        :per-page="1"
+        :total="totalCount"
+        @change="getFlags"
+      >
+      </b-pagination>
     </div>
   </section>
 </template>
@@ -99,7 +105,9 @@ export default {
     return {
       isEmpty: true,
       search: "",
+      currentPage: 1,
       flags: [],
+      total: 0,
     };
   },
   computed: {
@@ -116,10 +124,11 @@ export default {
   },
   methods: {
     getFlags() {
-      Api.get("/flags")
+      Api.get("/flags?offset=" + (this.currentPage - 1))
         .then((response) => {
           this.isEmpty = false;
           this.flags = response.data.flags ? response.data.flags : [];
+          this.total = response.data.total;
         })
         .catch((error) => {
           this.notifyError("Error loading flags.");

@@ -1469,6 +1469,10 @@
           "items": {
             "$ref": "#/definitions/fliptFlag"
           }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1562,6 +1566,10 @@
           "items": {
             "$ref": "#/definitions/fliptSegment"
           }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

@@ -70,6 +70,16 @@ func (s *Store) GetFlag(ctx context.Context, key string) (*flipt.Flag, error) {
 	return flag, nil
 }
 
+func (s *Store) CountFlags(ctx context.Context) (uint, error) {
+	var count uint
+
+	if err := s.builder.Select("COUNT(*)").From("flags").QueryRowContext(ctx).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 // ListFlags lists all flags
 func (s *Store) ListFlags(ctx context.Context, opts ...storage.QueryOption) ([]*flipt.Flag, error) {
 	var (

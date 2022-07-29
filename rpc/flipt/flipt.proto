@@ -83,6 +83,7 @@ message Flag {
 
 message FlagList {
   repeated Flag flags = 1;
+  int32 total = 2;
 }
 
 message GetFlagRequest {
@@ -204,6 +205,7 @@ message Segment {
 
 message SegmentList {
   repeated Segment segments = 1;
+  int32 total = 2;
 }
 
 message GetSegmentRequest {
