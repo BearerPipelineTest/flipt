@@ -329,6 +329,7 @@ message Rule {
 
 message RuleList {
   repeated Rule rules = 1;
+  int32 total = 2;
 }
 
 message ListRuleRequest {

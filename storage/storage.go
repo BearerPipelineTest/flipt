@@ -89,6 +89,7 @@ type FlagStore interface {
 type SegmentStore interface {
 	GetSegment(ctx context.Context, key string) (*flipt.Segment, error)
 	ListSegments(ctx context.Context, opts ...QueryOption) ([]*flipt.Segment, error)
+	CountSegments(ctx context.Context) (uint, error)
 	CreateSegment(ctx context.Context, r *flipt.CreateSegmentRequest) (*flipt.Segment, error)
 	UpdateSegment(ctx context.Context, r *flipt.UpdateSegmentRequest) (*flipt.Segment, error)
 	DeleteSegment(ctx context.Context, r *flipt.DeleteSegmentRequest) error
@@ -101,6 +102,7 @@ type SegmentStore interface {
 type RuleStore interface {
 	GetRule(ctx context.Context, id string) (*flipt.Rule, error)
 	ListRules(ctx context.Context, flagKey string, opts ...QueryOption) ([]*flipt.Rule, error)
+	CountRules(ctx context.Context) (uint, error)
 	CreateRule(ctx context.Context, r *flipt.CreateRuleRequest) (*flipt.Rule, error)
 	UpdateRule(ctx context.Context, r *flipt.UpdateRuleRequest) (*flipt.Rule, error)
 	DeleteRule(ctx context.Context, r *flipt.DeleteRuleRequest) error

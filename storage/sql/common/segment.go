@@ -53,6 +53,16 @@ func (s *Store) GetSegment(ctx context.Context, key string) (*flipt.Segment, err
 	return segment, nil
 }
 
+func (s *Store) CountSegments(ctx context.Context) (uint, error) {
+	var count uint
+
+	if err := s.builder.Select("COUNT(*)").From("segments").QueryRowContext(ctx).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 // ListSegments lists all segments
 func (s *Store) ListSegments(ctx context.Context, opts ...storage.QueryOption) ([]*flipt.Segment, error) {
 	var (

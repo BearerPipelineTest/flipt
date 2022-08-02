@@ -30,6 +30,13 @@ func (s *Server) ListRules(ctx context.Context, r *flipt.ListRuleRequest) (*flip
 		resp.Rules = append(resp.Rules, rules[i])
 	}
 
+	count, err := s.store.CountRules(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Total = int32(count)
+
 	s.logger.WithField("response", &resp).Debug("list rules")
 	return &resp, nil
 }

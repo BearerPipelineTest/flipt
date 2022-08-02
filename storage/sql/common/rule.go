@@ -47,6 +47,16 @@ func (s *Store) GetRule(ctx context.Context, id string) (*flipt.Rule, error) {
 	return rule, nil
 }
 
+func (s *Store) CountRules(ctx context.Context) (uint, error) {
+	var count uint
+
+	if err := s.builder.Select("COUNT(*)").From("rules").QueryRowContext(ctx).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 // ListRules gets all rules for a flag
 func (s *Store) ListRules(ctx context.Context, flagKey string, opts ...storage.QueryOption) ([]*flipt.Rule, error) {
 	var (

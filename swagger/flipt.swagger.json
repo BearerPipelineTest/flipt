@@ -1524,6 +1524,10 @@
           "items": {
             "$ref": "#/definitions/fliptRule"
           }
+        },
+        "total": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

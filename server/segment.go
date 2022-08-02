@@ -30,6 +30,13 @@ func (s *Server) ListSegments(ctx context.Context, r *flipt.ListSegmentRequest) 
 		resp.Segments = append(resp.Segments, segments[i])
 	}
 
+	count, err := s.store.CountSegments(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Total = int32(count)
+
 	s.logger.WithField("response", &resp).Debug("list segments")
 	return &resp, nil
 }

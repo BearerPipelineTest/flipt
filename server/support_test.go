@@ -26,6 +26,7 @@ func (m *storeMock) GetFlag(ctx context.Context, key string) (*flipt.Flag, error
 	return args.Get(0).(*flipt.Flag), args.Error(1)
 }
 
+// TODO: implement
 func (m *storeMock) CountFlags(ctx context.Context) (uint, error) {
 	return 0, nil
 }
@@ -70,6 +71,11 @@ func (m *storeMock) GetSegment(ctx context.Context, key string) (*flipt.Segment,
 	return args.Get(0).(*flipt.Segment), args.Error(1)
 }
 
+// TODO: implement
+func (m *storeMock) CountSegments(ctx context.Context) (uint, error) {
+	return 0, nil
+}
+
 func (m *storeMock) ListSegments(ctx context.Context, opts ...storage.QueryOption) ([]*flipt.Segment, error) {
 	args := m.Called(ctx, opts)
 	return args.Get(0).([]*flipt.Segment), args.Error(1)
@@ -108,6 +114,11 @@ func (m *storeMock) DeleteConstraint(ctx context.Context, r *flipt.DeleteConstra
 func (m *storeMock) GetRule(ctx context.Context, id string) (*flipt.Rule, error) {
 	args := m.Called(ctx, id)
 	return args.Get(0).(*flipt.Rule), args.Error(1)
+}
+
+// TODO: implement
+func (m *storeMock) CountRules(ctx context.Context) (uint, error) {
+	return 0, nil
 }
 
 func (m *storeMock) ListRules(ctx context.Context, flagKey string, opts ...storage.QueryOption) ([]*flipt.Rule, error) {
