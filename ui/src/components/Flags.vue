@@ -28,11 +28,7 @@
           </div>
         </div>
       </div>
-      <b-table
-        :data="isEmpty ? [] : filteredFlags"
-        icon-pack="fas"
-        :hoverable="true"
-      >
+      <b-table :data="filteredFlags" icon-pack="fas" :hoverable="true">
         <b-table-column v-slot="props" field="enabled" label="Enabled">
           <span v-if="props.row.enabled" class="tag is-primary is-rounded"
             >On</span
@@ -83,10 +79,9 @@
         </template>
       </b-table>
       <b-pagination
-        v-if="totalCount > 20"
         v-model="currentPage"
-        :per-page="1"
-        :total="totalCount"
+        :per-page="20"
+        :total="total"
         @change="getFlags"
       >
       </b-pagination>
@@ -103,7 +98,6 @@ export default {
   mixins: [notify],
   data() {
     return {
-      isEmpty: true,
       search: "",
       currentPage: 1,
       flags: [],
@@ -124,9 +118,9 @@ export default {
   },
   methods: {
     getFlags() {
-      Api.get("/flags?offset=" + (this.currentPage - 1))
+      let offset = this.currentPage - 1;
+      Api.get(`/flags?offset=${offset}`)
         .then((response) => {
-          this.isEmpty = false;
           this.flags = response.data.flags ? response.data.flags : [];
           this.total = response.data.total;
         })

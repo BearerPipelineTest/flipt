@@ -19,6 +19,19 @@ func (s *Server) GetSegment(ctx context.Context, r *flipt.GetSegmentRequest) (*f
 // ListSegments lists all segments
 func (s *Server) ListSegments(ctx context.Context, r *flipt.ListSegmentRequest) (*flipt.SegmentList, error) {
 	s.logger.WithField("request", r).Debug("list segments")
+
+	if r.Limit < 1 {
+		r.Limit = defaultListLimit
+	}
+
+	if r.Limit > maxListLimit {
+		r.Limit = maxListLimit
+	}
+
+	if r.Offset < 0 {
+		r.Offset = 0
+	}
+
 	segments, err := s.store.ListSegments(ctx, storage.WithLimit(uint64(r.Limit)), storage.WithOffset(uint64(r.Offset)))
 	if err != nil {
 		return nil, err

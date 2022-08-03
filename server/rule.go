@@ -19,6 +19,19 @@ func (s *Server) GetRule(ctx context.Context, r *flipt.GetRuleRequest) (*flipt.R
 // ListRules lists all rules for a flag
 func (s *Server) ListRules(ctx context.Context, r *flipt.ListRuleRequest) (*flipt.RuleList, error) {
 	s.logger.WithField("request", r).Debug("list rules")
+
+	if r.Limit < 1 {
+		r.Limit = defaultListLimit
+	}
+
+	if r.Limit > maxListLimit {
+		r.Limit = maxListLimit
+	}
+
+	if r.Offset < 0 {
+		r.Offset = 0
+	}
+
 	rules, err := s.store.ListRules(ctx, r.FlagKey, storage.WithLimit(uint64(r.Limit)), storage.WithOffset(uint64(r.Offset)))
 	if err != nil {
 		return nil, err

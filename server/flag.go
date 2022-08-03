@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	defaultListFlagsLimit = 20
-	maxListFlagsLimit     = 50
+	defaultListLimit = 20
+	maxListLimit     = 50
 )
 
 // GetFlag gets a flag
@@ -26,11 +26,15 @@ func (s *Server) ListFlags(ctx context.Context, r *flipt.ListFlagRequest) (*flip
 	s.logger.WithField("request", r).Debug("list flags")
 
 	if r.Limit < 1 {
-		r.Limit = defaultListFlagsLimit
+		r.Limit = defaultListLimit
 	}
 
-	if r.Limit > maxListFlagsLimit {
-		r.Limit = maxListFlagsLimit
+	if r.Limit > maxListLimit {
+		r.Limit = maxListLimit
+	}
+
+	if r.Offset < 0 {
+		r.Offset = 0
 	}
 
 	flags, err := s.store.ListFlags(ctx, storage.WithLimit(uint64(r.Limit)), storage.WithOffset(uint64(r.Offset)))

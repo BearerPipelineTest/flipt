@@ -29,13 +29,7 @@
           </div>
         </div>
       </div>
-      <b-table
-        :data="filteredSegments"
-        :paginated="segments.length > 20"
-        per-page="20"
-        icon-pack="fas"
-        :hoverable="true"
-      >
+      <b-table :data="filteredSegments" icon-pack="fas" :hoverable="true">
         <b-table-column v-slot="props" field="key" label="Key" sortable>
           <RouterLink :to="{ name: 'segment', params: { key: props.row.key } }">
             {{ props.row.key }}
@@ -89,6 +83,13 @@
           </section>
         </template>
       </b-table>
+      <b-pagination
+        v-model="currentPage"
+        :per-page="20"
+        :total="total"
+        @change="getSegments"
+      >
+      </b-pagination>
     </div>
   </section>
 </template>
@@ -103,7 +104,9 @@ export default {
   data() {
     return {
       search: "",
+      currentPage: 1,
       segments: [],
+      total: 0,
     };
   },
   computed: {
@@ -121,6 +124,7 @@ export default {
       Api.get("/segments")
         .then((response) => {
           this.segments = response.data.segments ? response.data.segments : [];
+          this.total = response.data.total;
         })
         .catch((error) => {
           this.notifyError("Error loading segments.");
