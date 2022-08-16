@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	flipt "go.flipt.io/flipt/rpc/flipt"
+	"go.flipt.io/flipt/storage"
 )
 
 func TestGetFlag(t *testing.T) {
@@ -53,6 +54,97 @@ func TestListFlags(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.NotEmpty(t, got.Flags)
+}
+
+func TestListFlags_Pagination(t *testing.T) {
+	tests := []struct {
+		name     string
+		offset   int32
+		limit    int32
+		expected storage.QueryParams
+	}{
+		{
+			name: "default/no pagination",
+			expected: storage.QueryParams{
+				Offset: 0,
+				Limit:  20,
+			},
+		},
+		{
+			name:   "negative offset",
+			offset: -1,
+			expected: storage.QueryParams{
+				Offset: 0,
+				Limit:  20,
+			},
+		},
+		{
+			name:  "negative limit",
+			limit: -1,
+			expected: storage.QueryParams{
+				Offset: 0,
+				Limit:  20,
+			},
+		},
+		{
+			name:  "zero limit",
+			limit: 0,
+			expected: storage.QueryParams{
+				Offset: 0,
+				Limit:  20,
+			},
+		},
+		{
+			name:  "max limit",
+			limit: 100,
+			expected: storage.QueryParams{
+				Offset: 0,
+				Limit:  50,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			var (
+				store = &storeMock{}
+				s     = &Server{
+					logger: logger,
+					store:  store,
+				}
+			)
+
+			store.On("CountFlags", mock.Anything).Return(uint(3), nil)
+			store.On("ListFlags", mock.Anything, mock.MatchedBy(func(opts []storage.QueryOption) bool {
+				params := storage.QueryParams{}
+				for _, o := range opts {
+					o(&params)
+				}
+
+				return assert.Equal(t, tt.expected, params)
+			})).Return(
+				[]*flipt.Flag{
+					{
+						Key: "foo",
+					},
+					{
+						Key: "bar",
+					},
+					{
+						Key: "baz",
+					},
+				}, nil)
+
+			got, err := s.ListFlags(context.TODO(), &flipt.ListFlagRequest{
+				Offset: tt.offset,
+				Limit:  tt.limit,
+			})
+
+			require.NoError(t, err)
+			assert.NotEmpty(t, got.Flags)
+		})
+	}
 }
 
 func TestCreateFlag(t *testing.T) {
